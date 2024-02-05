@@ -1,7 +1,5 @@
-use core::panic;
 use std::collections::HashMap;
 
-use futures_signals::signal::Mutable;
 use proc_macro::TokenStream;
 use quote::{format_ident, quote};
 use regex::Regex;
@@ -25,12 +23,18 @@ const FIELD_ARGS_PAT: &str = r#"([A-z]+? *: *(?:".+?"|.+? *(?:,|$)))"#;
 #[proc_macro]
 pub fn form(item: TokenStream) -> TokenStream {
     let string = item.to_string();
-    extract_field(string).into()
+    let fields = extract_fields(string);
+    TokenStream::from(quote! {
+        vec![
+            #( #fields )*
+        ]
+    })
 }
 
-fn extract_field(string: String) -> proc_macro2::TokenStream {
+fn extract_fields(string: String) -> Vec<proc_macro2::TokenStream> {
     let fields = Regex::new(FIELD_PAT).unwrap();
     let fields = fields.captures_iter(&string);
+    let mut quotes = Vec::<proc_macro2::TokenStream>::new();
 
     for field in fields.into_iter() {
         let field = field[1].trim().replace("\n", "");
@@ -71,16 +75,16 @@ fn extract_field(string: String) -> proc_macro2::TokenStream {
         let field_type = map.get("type").unwrap().as_str();
         let field_type = format_ident!("{}", field_type);
 
-        return quote! {
+        quotes.push(quote! {
             Field::<#field_type> {
                 label: #label,
                 value: futures_signals::signal::Mutable::new(),
                 error: futures_signals::signal::Mutable::new(),
                 regex: #pattern,
                 required: #required,
-            }
-        };
+            },
+        });
     }
 
-    panic!("No field found");
+    quotes
 }

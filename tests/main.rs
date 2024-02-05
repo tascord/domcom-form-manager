@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use forms::form;
+    use domcom_form_manager::form;
     use futures_signals::signal::Mutable;
 
     pub struct Field<T> {
@@ -14,6 +14,8 @@ mod tests {
     #[test]
     fn it_works() {
         let data = form!(
+            .field(id: "first_name", label: "First Name", pattern: ".{3,}", required: true, type: String)
+            .field(id: "first_name", label: "First Name", pattern: ".{3,}", required: true, type: String)
             .field(id: "first_name", label: "First Name", pattern: ".{3,}", required: true, type: String)
         );
     }

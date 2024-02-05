@@ -5,7 +5,7 @@ use std::prelude::rust_2021::*;
 extern crate std;
 #[cfg(test)]
 mod tests {
-    use forms::form;
+    use domcom_form_manager::form;
     use futures_signals::signal::Mutable;
     pub struct Field<T> {
         pub label: String,
@@ -35,13 +35,32 @@ mod tests {
         testfn: test::StaticTestFn(|| test::assert_test_result(it_works())),
     };
     fn it_works() {
-        let data = Field::<String> {
-            label: "First Name",
-            value: futures_signals::signal::Mutable::new(),
-            error: futures_signals::signal::Mutable::new(),
-            regex: ".{3,}",
-            required: true,
-        };
+        let data = <[_]>::into_vec(
+            #[rustc_box]
+            ::alloc::boxed::Box::new([
+                Field::<String> {
+                    label: "First Name",
+                    value: futures_signals::signal::Mutable::new(),
+                    error: futures_signals::signal::Mutable::new(),
+                    regex: ".{3,}",
+                    required: true,
+                },
+                Field::<String> {
+                    label: "First Name",
+                    value: futures_signals::signal::Mutable::new(),
+                    error: futures_signals::signal::Mutable::new(),
+                    regex: ".{3,}",
+                    required: true,
+                },
+                Field::<String> {
+                    label: "First Name",
+                    value: futures_signals::signal::Mutable::new(),
+                    error: futures_signals::signal::Mutable::new(),
+                    regex: ".{3,}",
+                    required: true,
+                },
+            ]),
+        );
     }
 }
 #[rustc_main]
