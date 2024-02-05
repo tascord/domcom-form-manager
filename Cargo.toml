@@ -1,6 +1,6 @@
 [package]
 name = "domcom-form-manager"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 description = "A macro to simplify forms. Must be used with domcom"
 repository = "https://github.com/tascord/domcom-form-manager"
